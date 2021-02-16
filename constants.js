@@ -16,7 +16,6 @@ COLOR_SCHEMES = {
 
 SCHEME = COLOR_SCHEMES.chess_com
 
-//Roboto Mono
-FONT = "https://openprocessing-usercontent.s3.amazonaws.com/files/user121056/visual839783/hde1931a99b4a00a9d4382c23c040fb26/RobotoMono-Medium.ttf"
+GITHUB_URL = "https://raw.githubusercontent.com/WalrusGumboot/Schaken/master/pieces/";
 
 SQ_W = 60
