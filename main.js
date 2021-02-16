@@ -63,6 +63,7 @@ function draw() {
     translate(shiftFactorX, shiftFactorY);
 
     for (squ of board) { //not using square as a name here since it's an internal p5 function
+        squ.update(cmx, cmy)
         squ.show(cmx, cmy);
     }
 

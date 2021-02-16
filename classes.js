@@ -38,15 +38,30 @@ class Square {
             this.piece     = new Piece(piece_colour, piece_type, this);
             this.populated = true;
         }
+
+        this.mouseHover = false;
     }
 
     show(cmx, cmy) {
         noStroke();
         this.colour == WHITE ? fill(SCHEME.light) : fill(SCHEME.dark)
-        if (cmx > this.x && cmx < this.x + SQ_W && cmy > this.y && cmy < this.y + SQ_W) {
-            this.colour == WHITE ? fill(SCHEME.hover_l) : fill(SCHEME.hover_d)
-        }
+        if (this.mouseHover) {this.colour == WHITE ? fill(SCHEME.hover_l) : fill(SCHEME.hover_d)}
+
         rect(this.x, this.y, SQ_W, SQ_W);
+
         if (this.populated) {this.piece.show()}
+    }
+
+    update(cmx, cmy) {
+        if (cmx > this.x && cmx < this.x + SQ_W && cmy > this.y && cmy < this.y + SQ_W) {
+            this.mouseHover = true;
+            if (this.populated) {
+                if (mouseIsPressed) {
+                    this.piece.pos = {x: cmx, y: cmy};
+                } else {
+                    this.piece.pos = this;
+                }
+            }
+        }
     }
 }
