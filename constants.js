@@ -1,0 +1,14 @@
+KING   = 1
+QUEEN  = 2
+KNIGHT = 4
+ROOK   = 8
+BISHOP = 16
+PAWN   = 32
+
+WHITE = 0
+BLACK = 64
+
+WHITE_COL = "#eeeefe"
+BLACK_COL = "#33335e"
+
+SQ_W = 40
