@@ -1,7 +1,9 @@
-sprites = new Array(128); //this is like the least efficient way of doing it but just stfu please
-board = new Array(64);
-
-font = null;
+let sprites = new Array(128); //this is like the least efficient way of doing it but just stfu please
+let board = new Array(64);
+let font = null;
+let draggedSquare = null;
+let draggedOffsetX = null;
+let draggedOffsetY = null;
 
 function preload() {
     i = WHITE
@@ -54,18 +56,36 @@ function setup() {
 function draw() {
     DARK_MODE ? background(15) : background(230)
 
-    shiftFactorX = width / 2 - 4 * SQ_W;
-    shiftFactorY = height / 2 - 4 * SQ_W;
+    let shiftFactorX = width / 2 - 4 * SQ_W;
+    let shiftFactorY = height / 2 - 4 * SQ_W;
 
-    cmx = mouseX - shiftFactorX;
-    cmy = mouseY - shiftFactorY;
+    let cmx = mouseX - shiftFactorX;
+    let cmy = mouseY - shiftFactorY;
 
     translate(shiftFactorX, shiftFactorY);
 
+    if (!mouseIsPressed && draggedSquare != null) {
+        draggedSquare  = null;
+        draggedOffsetX = null;
+        draggedOffsetY = null;
+    } 
+
     for (squ of board) { //not using square as a name here since it's an internal p5 function
-        squ.update(cmx, cmy)
+        result = squ.update(cmx, cmy, draggedSquare, draggedOffsetX, draggedOffsetY)
+        if (result.change) {
+            draggedSquare = squ;
+            draggedOffsetX = result.dx;
+            draggedOffsetY = result.dy;
+        }
+
         squ.show(cmx, cmy);
     }
+
+    for (squ of board) {
+        if (squ.populated) {squ.piece.show()}
+    }
+
+    //console.log(draggedOffsetX, draggedOffsetY)
 
     DARK_MODE ? fill(SCHEME.light) : fill(SCHEME.dark)
     textSize(SQ_W / 2);
@@ -75,6 +95,6 @@ function draw() {
     }
 
     for (let i = 1; i < 9; i++) {
-        text(i.toString(), -0.5 * SQ_W, (i - 0.5) * SQ_W);
+        text((9-i).toString(), -0.5 * SQ_W, (i - 0.5) * SQ_W);
     }
 }
