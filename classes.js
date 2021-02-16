@@ -3,19 +3,25 @@ class Square {
         // idx = (rank * 8 + file);
         this.idx = idx;
 
+        this.file = idx % 8;
+        this.fileName = String.fromCharCode(96 + this.file + 1); //96 is the ASCII offset for lowercase letters, add 1 bc. 0-based idx
+        
+        this.rank = (this.idx - this.file) / 8;
 
-        this.rank = idx % 8;
-        this.rankName = String.fromCharCode(96 + this.rank); //96 is the ASCII offset for lowercase letters
+        if (this.rank % 2 == 0) {this.file % 2 == 1 ? this.colour = WHITE : this.colour = BLACK}
+        else {this.file % 2 == 0 ? this.colour = WHITE : this.colour = BLACK}
 
-        this.file = (this.idx - this.rank) / 8;
+        
+        this.x = this.file * SQ_W
+        this.y = (7 - this.rank) * SQ_W
 
-        this.colour = this.idx % 2 == 0 ? WHITE : BLACK;
+        //console.log("INDEX: " + this.idx + " - file: " + this.file + " (" + this.fileName + ") - rank: " + this.rank + " - x, y: " + this.x + ", " + this.y);
     }
 
     show() {
-        if (this.colour == WHITE) {fill(WHITE_COL)} else {fill(BLACK_COL)}
+        if (this.colour == WHITE) {fill(SCHEME.light)} else {fill(SCHEME.dark)}
         noStroke();
-        square(this.file * SQ_W, this.rank * SQ_W, SQ_W);
+        rect(this.x, this.y, SQ_W, SQ_W);
     }
 }
 
