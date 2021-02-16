@@ -1,5 +1,20 @@
+class Piece {
+    constructor(colour, type, pos) {
+        this.colour = colour;
+        this.type   = type;
+        this.pos    = pos;
+
+        this.value = this.colour + this.type;
+        this.sprite = sprites[this.value]
+    }
+
+    show() {
+        image(this.sprite, this.pos.x, this.pos.y, SQ_W, SQ_W)
+    }
+}
+
 class Square {
-    constructor(idx) {
+    constructor(idx, piece_colour = null, piece_type = null) {
         // idx = (rank * 8 + file);
         this.idx = idx;
 
@@ -16,19 +31,22 @@ class Square {
         this.y = (7 - this.rank) * SQ_W
 
         //console.log("INDEX: " + this.idx + " - file: " + this.file + " (" + this.fileName + ") - rank: " + this.rank + " - x, y: " + this.x + ", " + this.y);
+        
+        this.populated = false;
+        
+        if (piece_colour != null && piece_type != null) {
+            this.piece     = new Piece(piece_colour, piece_type, this);
+            this.populated = true;
+        }
     }
 
-    show() {
-        if (this.colour == WHITE) {fill(SCHEME.light)} else {fill(SCHEME.dark)}
+    show(cmx, cmy) {
         noStroke();
+        this.colour == WHITE ? fill(SCHEME.light) : fill(SCHEME.dark)
+        if (cmx > this.x && cmx < this.x + SQ_W && cmy > this.y && cmy < this.y + SQ_W) {
+            this.colour == WHITE ? fill(SCHEME.hover_l) : fill(SCHEME.hover_d)
+        }
         rect(this.x, this.y, SQ_W, SQ_W);
-    }
-}
-
-class Piece {
-    constructor(colour, type, pos) {
-        this.colour = colour;
-        this.type   = type;
-        this.pos    = pos;
+        if (this.populated) {this.piece.show()}
     }
 }
