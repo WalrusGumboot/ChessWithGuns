@@ -1,9 +1,10 @@
 let sprites = new Array(128); //this is like the least efficient way of doing it but just stfu please
 let board = new Array(64);
+
 let font = null;
-let draggedSquare = null;
-let draggedOffsetX = null;
-let draggedOffsetY = null;
+
+let selectedSquare = null;
+
 
 function preload() {
     i = WHITE
@@ -64,28 +65,15 @@ function draw() {
 
     translate(shiftFactorX, shiftFactorY);
 
-    if (!mouseIsPressed && draggedSquare != null) {
-        draggedSquare  = null;
-        draggedOffsetX = null;
-        draggedOffsetY = null;
-    } 
 
     for (squ of board) { //not using square as a name here since it's an internal p5 function
-        result = squ.update(cmx, cmy, draggedSquare, draggedOffsetX, draggedOffsetY)
-        if (result.change) {
-            draggedSquare = squ;
-            draggedOffsetX = result.dx;
-            draggedOffsetY = result.dy;
-        }
-
+        squ.update(cmx, cmy);
         squ.show(cmx, cmy);
-    }
 
-    for (squ of board) {
         if (squ.populated) {squ.piece.show()}
     }
 
-    //console.log(draggedOffsetX, draggedOffsetY)
+    if (selectedSquare) {selectedSquare.show()} //redraw so it's on top
 
     DARK_MODE ? fill(SCHEME.light) : fill(SCHEME.dark)
     textSize(SQ_W / 2);

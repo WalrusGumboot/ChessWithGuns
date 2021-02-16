@@ -43,7 +43,8 @@ class Square {
     }
 
     show(cmx, cmy) {
-        noStroke();
+        stroke(0)
+        selectedSquare == this ? strokeWeight(4) : noStroke()
         this.colour == WHITE ? fill(SCHEME.light) : fill(SCHEME.dark)
         if (this.mouseHover) {this.colour == WHITE ? fill(SCHEME.hover_l) : fill(SCHEME.hover_d)}
 
@@ -52,31 +53,11 @@ class Square {
         //if (this.populated) {this.piece.show()}
     }
 
-    update(cmx, cmy, draggedSquare, dOffX, dOffY) {
-        let changeCurrentToDragged = false;
-
-        let dx = cmx - this.x
-        let dy = cmy - this.y
-
+    update(cmx, cmy) {
         if (cmx > this.x && cmx < this.x + SQ_W && cmy > this.y && cmy < this.y + SQ_W) {
             this.mouseHover = true;
-
-            if (this.populated) {
-                if (mouseIsPressed && draggedSquare == null) {                   
-                    this.piece.pos = {x: cmx - dx, y: cmy - dy};
-                    changeCurrentToDragged = true;
-                }
-
-            }
         } else {
             this.mouseHover = false;
         }
-
-        if (draggedSquare == this) {
-            this.piece.pos = {x: cmx - dOffX, y: cmy - dOffY};
-        }
-
-        if (!mouseIsPressed && this.populated) {this.piece.pos = this}
-        return {change: changeCurrentToDragged, dx: dx, dy: dy};
     }
 }
