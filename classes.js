@@ -6,10 +6,35 @@ class Piece {
 
         this.value = this.colour + this.type;
         this.sprite = sprites[this.value]
+
+        this.hasMovedYet = false //used for implementing castling and double pawn moves
     }
 
     show() {
         image(this.sprite, this.pos.x, this.pos.y, SQ_W, SQ_W)
+    }
+
+    set_pos(new_pos) {this.pos = new_pos;}
+
+    get_available_moves(board) {
+        let base_moves = [] 
+        //these are the moves a piece can make if there are no other pieces on the board
+        //all moves are in index offset: a pawn moving up one square is an offset of 8
+        //these do not account for taking
+
+        switch (this.type) {
+            case PAWN:
+                base_moves.push(8)
+                if (!this.hasMovedYet) { //double pawn movement
+                    base_moves.push(16)
+                }
+                break;
+            default:
+                //we never get to this point
+                break;
+        }
+
+        return base_moves; //TEMPORARY
     }
 }
 
@@ -33,6 +58,7 @@ class Square {
         //console.log("INDEX: " + this.idx + " - file: " + this.file + " (" + this.fileName + ") - rank: " + this.rank + " - x, y: " + this.x + ", " + this.y);
         
         this.populated = false;
+        this.piece = null;
         
         if (piece_colour != null && piece_type != null) {
             this.piece     = new Piece(piece_colour, piece_type, this);
@@ -44,13 +70,20 @@ class Square {
 
     show(cmx, cmy) {
         stroke(0)
-        selectedSquare == this ? strokeWeight(4) : noStroke()
+
+        selectedSquare == this ? strokeWeight(2) : noStroke()
+        drawingContext.setLineDash([SQ_W / 5]) //internally turns into [SQ_W / 5, SQ_W / 5]
+        drawingContext.lineDashOffset = (frameCount / 3)
+        drawingContext.lineCap = "butt"
+
         this.colour == WHITE ? fill(SCHEME.light) : fill(SCHEME.dark)
         if (this.mouseHover) {this.colour == WHITE ? fill(SCHEME.hover_l) : fill(SCHEME.hover_d)}
 
         rect(this.x, this.y, SQ_W, SQ_W);
 
-        //if (this.populated) {this.piece.show()}
+        //reset the fancy drawing ctx parameters we mucked up earlier
+        drawingContext.setLineDash([])
+        drawingContext.lineCap = "round"
     }
 
     update(cmx, cmy) {

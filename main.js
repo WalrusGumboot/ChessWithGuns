@@ -50,7 +50,36 @@ function setup() {
 
         if ((i >= 8 && i < 16) || (i >= 48 && i < 56)) {type = PAWN}
 
-        board[i] = new Square(i, type, colour);
+        board[i] = new Square(i, colour, type);
+    }
+}
+
+function mousePressed() {
+    for (squ of board) { //not using square as a name here since it's an internal p5 function
+        if (squ.mouseHover && selectedSquare == null) {
+            selectedSquare = squ
+        } else if (squ.mouseHover && selectedSquare == squ ) {
+            selectedSquare = null
+        } else if (squ.mouseHover && selectedSquare != squ ) {
+            if (!squ.populated && selectedSquare.populated) {
+                //TODO: ADD CHECK FOR VALID MOVES
+                //get available moves' offsets
+                let available_moves = selectedSquare.piece.get_available_moves(board);
+                let offsets = available_moves.map(x => x + selectedSquare.idx - squ.idx) //if any of these are zero, it's valid
+                
+                if (offsets.includes(0)) {
+                    squ.piece = selectedSquare.piece;
+                    squ.populated = true;
+                    squ.piece.set_pos(squ)
+                    squ.piece.hasMovedYet = true;
+                    
+                    selectedSquare.piece = null;
+                    selectedSquare.populated = false;
+    
+                    selectedSquare = null;
+                }
+            }
+        }
     }
 }
 
@@ -70,12 +99,35 @@ function draw() {
         squ.update(cmx, cmy);
         squ.show(cmx, cmy);
 
-        if (squ.populated) {squ.piece.show()}
+        if (squ.populated) {squ.piece.show()} //pieces are always drawn atop
     }
 
-    if (selectedSquare) {selectedSquare.show()} //redraw so it's on top
+    if (selectedSquare) {
+        //redraw so it's on top and so that the line looks like it should
+        selectedSquare.show()
+        if (selectedSquare.populated) {
+            selectedSquare.piece.show() //piece on top
 
+            //draw indicators for legal moves
+            fill(0, 100);
+            ellipseMode(CENTER);
+            noStroke()
+
+            let idx = selectedSquare.idx;
+            available_moves = selectedSquare.piece.get_available_moves(board);
+            for (moveOffset of available_moves) {
+                let moveSquare = board[idx + moveOffset]
+                let size = MOVING_MOVE_INDICATORS ? SQ_W/3 + Math.sin(frameCount / 15) * SQ_W/12 : SQ_W/3;
+                circle(moveSquare.x + SQ_W / 2, moveSquare.y + SQ_W / 2, size)
+            }
+        }
+    }
+
+
+
+    //board annotations
     DARK_MODE ? fill(SCHEME.light) : fill(SCHEME.dark)
+    noStroke()
     textSize(SQ_W / 2);
 
     for (let i = 1; i < 9; i++) {
