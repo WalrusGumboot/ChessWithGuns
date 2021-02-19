@@ -18,9 +18,7 @@ class Piece {
 
     get_available_moves(board) {
         let base_moves = [] 
-        //these are the moves a piece can make if there are no other pieces on the board
-        //all moves are in index offset: a pawn moving up one square is an offset of 8
-        //these do not account for taking or pieces being in the way
+        //base_moves
 
         switch (this.type) {
             case PAWN:
@@ -44,7 +42,17 @@ class Piece {
                 break;
         }
 
-        return base_moves; //TEMPORARY
+        let moves = base_moves;
+        //first, we filter out all moves that aren't on the board
+        moves = moves.filter(x => 0 <= x <= 64)
+
+
+        //most importantly, we flip all of black's moves
+        if (this.colour == BLACK) {
+            moves = moves.map(x => x * -1)
+        }
+
+        return moves; //TEMPORARY
     }
 }
 
@@ -58,9 +66,7 @@ class Square {
         
         this.rank = (this.idx - this.file) / 8;
 
-        if (this.rank % 2 == 0) {this.file % 2 == 1 ? this.colour = WHITE : this.colour = BLACK}
-        else {this.file % 2 == 0 ? this.colour = WHITE : this.colour = BLACK}
-
+        (this.rank + this.file) % 2 == 0 ? this.colour = BLACK : this.colour = WHITE; //thank you, Sebastian Lague! 
         
         this.x = this.file * SQ_W
         this.y = (7 - this.rank) * SQ_W

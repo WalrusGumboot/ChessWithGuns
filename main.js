@@ -1,4 +1,4 @@
-let sprites = new Array(24); //this is like the least efficient way of doing it but just stfu please
+let sprites = new Array(14); //this is like the least efficient way of doing it but just stfu please
 let board = new Array(64);
 
 let font = null;
@@ -37,8 +37,10 @@ function preload() {
     font = loadFont("https://openprocessing-usercontent.s3.amazonaws.com/files/user121056/visual839783/hde1931a99b4a00a9d4382c23c040fb26/RobotoMono-Medium.ttf");
 }
 
+let canvas;
+
 function setup() {
-    createCanvas(windowWidth, windowHeight);
+    canvas = createCanvas(windowWidth, windowHeight);
     textFont(font);
     textAlign(CENTER, CENTER)
 
@@ -64,7 +66,8 @@ function setup() {
 
 function mousePressed() {
     for (squ of board) { //not using square as a name here since it's an internal p5 function
-        if (squ.mouseHover && selectedSquare == null) {
+        /*
+        if (squ.mouseHover && selectedSquare == null && squ.populated && squ.piece.colour == sideToMove) {
             selectedSquare = squ
         } else if (squ.mouseHover && selectedSquare == squ ) {
             selectedSquare = null
@@ -88,15 +91,70 @@ function mousePressed() {
 
                     if (sideToMove == WHITE) {sideToMove = BLACK} else {sideToMove = WHITE};
                 }
-            } else {
+            }
+        }
+        */ //OLD, BAD CODE
+
+        if (squ.mouseHover) {
+            if (selectedSquare == null && squ.populated && squ.piece.colour == sideToMove) {
+                //nothing appropriate is selected, so we select this square
                 selectedSquare = squ;
+            } else if (selectedSquare != null && squ.populated && squ.piece.colour == sideToMove) {
+                //smth was already selected, but it was our colour so just select this one instead
+                selectedSquare = squ;
+            } else if (selectedSquare.idx == squ.idx) {
+                //the user pressed the same square again, so we deselect it
+                selectedSquare = null;
             }
         }
     }
 }
 
 function draw() {
+    canvas.resize(windowWidth, windowHeight);
+    
     DARK_MODE ? background(15) : background(230)
+
+    //Draw the colour scheme previews
+    for (i = 0; i < Object.keys(COLOUR_SCHEMES).length; i++) {
+        scheme = Object.values(COLOUR_SCHEMES)[i];
+
+        let x1 = COL_SCH_DX + i * (COL_SCH_W + COL_SCH_M);
+        let x2 = COL_SCH_DX + i * (COL_SCH_W + COL_SCH_M) + COL_SCH_W;
+        let y1 = COL_SCH_DY;
+        let y2 = COL_SCH_DY + COL_SCH_W;
+        
+        noStroke();
+
+        //dark part of the square
+        fill(scheme.dark)
+        triangle(
+            x1, y1, //top left corner of the triangle
+            x2, y1, //top right
+            x1, y2  //bottom left
+        );
+
+        //light part
+        fill(scheme.light)
+        triangle(
+            x2, y2, //bottom right corner of the triangle
+            x1, y2, //bottom left
+            x2, y1 //top right
+        );
+        
+        //line around the selected scheme
+        noFill();
+        strokeWeight(3);
+        DARK_MODE ? stroke(220) : stroke(30);
+
+        if (scheme == SCHEME) {
+            rect(x1, y1, COL_SCH_W, COL_SCH_W);
+        } else {
+            if (mouseIsPressed && mouseX > x1 && mouseX < x2 && mouseY > y1 && mouseY < y2) {
+                SCHEME = scheme;
+            }
+        }
+    }
 
     let shiftFactorX = width / 2 - 4 * SQ_W;
     let shiftFactorY = height / 2 - 4 * SQ_W;
@@ -120,18 +178,18 @@ function draw() {
         if (selectedSquare.populated) {
             selectedSquare.piece.show() //piece on top
 
-            //draw indicators for legal moves
-            fill(0, 100);
-            ellipseMode(CENTER);
-            noStroke()
+            // //draw indicators for legal moves
+            // fill(0, 100);
+            // ellipseMode(CENTER);
+            // noStroke()
 
-            let idx = selectedSquare.idx;
-            available_moves = selectedSquare.piece.get_available_moves(board);
-            for (moveOffset of available_moves) {
-                let moveSquare = board[idx + moveOffset]
-                let size = MOVING_MOVE_INDICATORS ? SQ_W/3 + Math.sin(frameCount / 15) * SQ_W/12 : SQ_W/3;
-                circle(moveSquare.x + SQ_W / 2, moveSquare.y + SQ_W / 2, size)
-            }
+            // let idx = selectedSquare.idx;
+            // available_moves = selectedSquare.piece.get_available_moves(board);
+            // for (moveOffset of available_moves) {
+            //     let moveSquare = board[idx + moveOffset]
+            //     let size = MOVING_MOVE_INDICATORS ? SQ_W/3 + Math.sin(frameCount / 15) * SQ_W/12 : SQ_W/3;
+            //     circle(moveSquare.x + SQ_W / 2, moveSquare.y + SQ_W / 2, size)
+            // }
         }
     }
 
@@ -150,17 +208,16 @@ function draw() {
         text((9-i).toString(), -0.5 * SQ_W, (i - 0.5) * SQ_W);
     }
 
-    noStroke()
-    for (squ of board) {
-        if (squ.colour == WHITE) {
-            fill(SCHEME.dark)
-        } else {
-            fill(SCHEME.light)
-
-        }
-        textSize(20)
-        
-        let offset = 0
-        text((squ.idx - offset).toString(), squ.x + SQ_W/2, squ.y + SQ_W / 2)
-    }
+    // noStroke()
+    // for (squ of board) {
+    //     if (squ.colour == WHITE) {
+    //         fill(SCHEME.dark)
+    //     } else {
+    //         fill(SCHEME.light)
+    //     }
+    //     textSize(20)
+    
+    //     let offset = 0
+    //     text((squ.idx - offset).toString(), squ.x + SQ_W/2, squ.y + SQ_W / 2)
+    // }
 }
