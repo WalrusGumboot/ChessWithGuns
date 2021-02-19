@@ -45,10 +45,8 @@ class Piece {
 
         switch (this.type) {
             case PAWN:
-                console.log("Yup, that's a pawn all right")
-                console.log(this.pos.rank)
                 moves.push(new Move(0, 1, this.pos));
-                if (!this.hasMovedYet) {moves.push(new Move(0, 2))}
+                if (!this.hasMovedYet) {moves.push(new Move(0, 2, this.pos))}
                 if (board[this.pos.idx + 7].populated && board[this.pos.idx + 7].piece.colour != this.colour) {
                     captures.push(new Move(-1, 1, this.pos)) //takes to the left
                 }
@@ -86,7 +84,6 @@ class Piece {
         // * moves that don't prevent a check when the king is in check are still allowed
         // * and many, many more.
         
-        console.log(moves, captures)
         //for now though, we don't care
         return {moves: moves, captures: captures}
     }

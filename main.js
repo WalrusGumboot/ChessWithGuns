@@ -10,6 +10,11 @@ let couldCastle = {
     BLACK: {kingSide: true, queenSide: true}
 }
 
+let capturedMaterial = {
+    WHITE: [],
+    BLACK: []
+}
+
 let sideToMove = WHITE;
 
 
@@ -100,17 +105,40 @@ function mousePressed() {
         }
         */ //OLD, BAD CODE
 
-        if (squ.mouseHover) {
-            if (selectedSquare == null && squ.populated && squ.piece.colour == sideToMove) {
+        if (squ.mouseHover && squ.populated) {
+            if (selectedSquare == null && squ.piece.colour == sideToMove) {
                 //nothing appropriate is selected, so we select this square
                 selectedSquare = squ;
             } else if (selectedSquare == squ) {
                 //the user pressed the same square again, so we deselect it
                 selectedSquare = null;
-            } else if (selectedSquare != null && squ.populated && squ.piece.colour == sideToMove) {
+            } else if (selectedSquare != null && squ.piece.colour == sideToMove) {
                 //smth was already selected, but it was our colour so just select this one instead
                 selectedSquare = squ;
-            } 
+            } else if (selectedSquare != null && selectedSquare != squ) {
+                let moveSet = squ.piece.get_available_moves(board);
+
+                //Check if the move would be a capture
+                for (capture of moveSet.captures) {
+                    let targetSquare = capture.getOnBoard(board)
+                    if (targetSquare.idx == squ.idx) {
+                        if (targetSquare.piece.colour == BLACK) {
+                            capturedMaterial.BLACK.push(targetSquare.piece);
+                        } else {
+                            capturedMaterial.WHITE.push(targetSquare.piece);
+                        }
+
+                        targetSquare.piece = selectedSquare.piece;
+                        selectedSquare.piece = null;
+                        selectedSquare.populated = false;
+                    }
+                }
+
+                //Oh yeah and check regular moves too
+                //I aint got time for that now tho
+                //It's fucking 1am
+                //TODO: this shit
+            }
         }
     }
 }
@@ -220,7 +248,6 @@ function draw() {
             noStroke();
 
             available_moves = selectedSquare.piece.get_available_moves(board);
-            console.log(available_moves)
             for (move of available_moves.moves) {
                 squ = move.getOnBoard(board)
                 let size = MOVING_MOVE_INDICATORS ? SQ_W/3 + Math.sin(frameCount / 15) * SQ_W/12 : SQ_W/3;
