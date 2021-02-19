@@ -9,7 +9,7 @@ class Move {
         let file = this.currentSquare.file + this.xOff;
         let rank = this.currentSquare.rank + this.yOff;
 
-        return rank < 0 || rank > 7 || file < 0 || file > 7
+        return rank > 0 || rank < 7 || file > 0 || file < 7
     }
 
     getOnBoard(board) {
