@@ -1,3 +1,18 @@
+class Move {
+    constructor(xOff, yOff, currentSquare) {
+        this.xOff = xOff;
+        this.yOff = yOff;
+        this.currentSquare = currentSquare;
+    }
+
+    testIfOnBoard() {
+        let rank = this.currentSquare.rank + xOff;
+        let file = this.currentSquare.file + yOff;
+
+        return rank < 0 || rank > 7 || file < 0 || file > 7
+    }
+}
+
 class Piece {
     constructor(colour, type, pos) {
         this.colour = colour;
@@ -17,42 +32,25 @@ class Piece {
     set_pos(new_pos) {this.pos = new_pos;}
 
     get_available_moves(board) {
-        let base_moves = [] 
-        //base_moves
+        let moves    = []
+        let captures = []
 
         switch (this.type) {
             case PAWN:
-                base_moves.push(8)
-                if (!this.hasMovedYet) { //double pawn movement
-                    base_moves.push(16)
+                moves.push(new Move(0, 1, this.pos));
+                if (this.hasMovedYet) {moves.push(new Move(0, 2))}
+                if (board[this.pos.idx + 7].populated && board[this.pos.idx + 7].piece.colour != this.colour) {
+                    captures.push(new Move(-1, 1, this.pos)) //takes to the left
                 }
-                break;
-            case KING:
-                //TODO: implement castling
-                for (i of [-9, -8, -7, -1, 1, 7, 8, 9]) {
-                    base_moves.push(i)
+                if (board[this.pos.idx + 9].populated && board[this.pos.idx + 9].piece.colour != this.colour) {
+                    captures.push(new Move(1, 1, this.pos)) //takes to the right
                 }
+                //For now, I really don't feel like dealing with fucking en passant
+                //Maybe in the future I'll have less will to live, and I'll attempt it
                 break;
             case KNIGHT:
-                for (i of [-17, -15, -10, -6, 6, 10, 15, 17]) {
-                    base_moves.push(i)
-                }
-            default:
-                //we never get to this point
-                break;
+                moves.push(new Move())
         }
-
-        let moves = base_moves;
-        //first, we filter out all moves that aren't on the board
-        moves = moves.filter(x => 0 <= x <= 64)
-
-
-        //most importantly, we flip all of black's moves
-        if (this.colour == BLACK) {
-            moves = moves.map(x => x * -1)
-        }
-
-        return moves; //TEMPORARY
     }
 }
 
@@ -84,12 +82,12 @@ class Square {
         this.mouseHover = false;
     }
 
-    show(cmx, cmy) {
+    show() {
         stroke(0)
 
         selectedSquare == this ? strokeWeight(2) : noStroke()
-        drawingContext.setLineDash([SQ_W / 3]) //internally turns into [SQ_W, SQ_W]
-        drawingContext.lineDashOffset = (frameCount * 1.5)
+        drawingContext.setLineDash([SQ_W / 1.5]) //internally turns into [SQ_W / 1.5, SQ_W / 1.5]
+        drawingContext.lineDashOffset = Math.sin(frameCount / 60) * SQ_W * 4
         drawingContext.lineCap = "butt"
 
         this.colour == WHITE ? fill(SCHEME.light) : fill(SCHEME.dark)

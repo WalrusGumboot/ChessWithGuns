@@ -104,20 +104,20 @@ function mousePressed() {
             if (selectedSquare == null && squ.populated && squ.piece.colour == sideToMove) {
                 //nothing appropriate is selected, so we select this square
                 selectedSquare = squ;
+            } else if (selectedSquare == squ) {
+                //the user pressed the same square again, so we deselect it
+                selectedSquare = null;
             } else if (selectedSquare != null && squ.populated && squ.piece.colour == sideToMove) {
                 //smth was already selected, but it was our colour so just select this one instead
                 selectedSquare = squ;
-            } else if (selectedSquare.idx == squ.idx) {
-                //the user pressed the same square again, so we deselect it
-                selectedSquare = null;
-            }
+            } 
         }
     }
 }
 
 function draw() {
     canvas.resize(windowWidth, windowHeight);
-    
+
     DARK_MODE ? background(15) : background(230)
     
     //Draw the colour scheme previews

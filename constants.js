@@ -20,7 +20,7 @@ const COLOUR_SCHEMES = {
 }
 
 let SCHEME = COLOUR_SCHEMES.chess_com
-let DARK_MODE = false
+let DARK_MODE = true
 
 const MOVING_MOVE_INDICATORS = false;
 let SHOW_COORDINATES = false;
