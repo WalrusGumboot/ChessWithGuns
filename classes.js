@@ -88,8 +88,8 @@ class Square {
         stroke(0)
 
         selectedSquare == this ? strokeWeight(2) : noStroke()
-        drawingContext.setLineDash([SQ_W / 5]) //internally turns into [SQ_W / 5, SQ_W / 5]
-        drawingContext.lineDashOffset = (frameCount / 3)
+        drawingContext.setLineDash([SQ_W / 3]) //internally turns into [SQ_W, SQ_W]
+        drawingContext.lineDashOffset = (frameCount * 1.5)
         drawingContext.lineCap = "butt"
 
         this.colour == WHITE ? fill(SCHEME.light) : fill(SCHEME.dark)

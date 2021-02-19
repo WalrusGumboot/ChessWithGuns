@@ -65,6 +65,11 @@ function setup() {
 }
 
 function mousePressed() {
+    //dark mode switch
+    if (mouseIsPressed && mouseX > COL_SCH_DX && mouseX < COL_SCH_W * 3 && mouseY > COL_SCH_DY + COL_SCH_W * 2.25 && mouseY < COL_SCH_DY + COL_SCH_W * 3.25) {
+        DARK_MODE = !DARK_MODE;
+    }
+
     for (squ of board) { //not using square as a name here since it's an internal p5 function
         /*
         if (squ.mouseHover && selectedSquare == null && squ.populated && squ.piece.colour == sideToMove) {
@@ -114,8 +119,18 @@ function draw() {
     canvas.resize(windowWidth, windowHeight);
     
     DARK_MODE ? background(15) : background(230)
-
+    
     //Draw the colour scheme previews
+    DARK_MODE ? fill(255) : fill(0);
+
+    noStroke();
+
+    textAlign(LEFT, BASELINE);
+    textSize(COL_SCH_W / 1.8);
+
+    text("colour schemes", COL_SCH_DX, COL_SCH_DY - 8);
+    text("dark mode", COL_SCH_DX, COL_SCH_DY + COL_SCH_W * 2)
+
     for (i = 0; i < Object.keys(COLOUR_SCHEMES).length; i++) {
         scheme = Object.values(COLOUR_SCHEMES)[i];
 
@@ -150,12 +165,33 @@ function draw() {
         if (scheme == SCHEME) {
             rect(x1, y1, COL_SCH_W, COL_SCH_W);
         } else {
-            if (mouseIsPressed && mouseX > x1 && mouseX < x2 && mouseY > y1 && mouseY < y2) {
-                SCHEME = scheme;
+            if (mouseX > x1 && mouseX < x2 && mouseY > y1 && mouseY < y2) {
+                strokeWeight(2);
+                DARK_MODE ? stroke(190) : stroke(60);
+                rect(x1, y1, COL_SCH_W, COL_SCH_W);
+                if (mouseIsPressed) {SCHEME = scheme;}
             }
         }
     }
 
+    //dark mode switch outline
+    DARK_MODE ? stroke(SCHEME.light) : stroke(SCHEME.dark);
+    noFill();
+    strokeWeight(2);
+    rect(COL_SCH_DX, COL_SCH_DY + COL_SCH_W * 2.25, COL_SCH_W * 2, COL_SCH_W, COL_SCH_W);
+
+    //dark mode switch "button"
+    noStroke();
+    ellipseMode(CENTER);
+    if (DARK_MODE) {
+        fill(SCHEME.light);
+        ellipse(COL_SCH_DX + COL_SCH_W * 1.5, COL_SCH_DY + COL_SCH_W * 2.75, COL_SCH_W / 1.75, COL_SCH_W / 1.75)
+    } else {
+        fill(SCHEME.dark);
+        ellipse(COL_SCH_DX + COL_SCH_W * 0.5, COL_SCH_DY + COL_SCH_W * 2.75, COL_SCH_W / 1.75, COL_SCH_W / 1.75)
+    }
+
+    
     let shiftFactorX = width / 2 - 4 * SQ_W;
     let shiftFactorY = height / 2 - 4 * SQ_W;
 
@@ -195,18 +231,22 @@ function draw() {
 
 
 
-    //board annotations
-    DARK_MODE ? fill(SCHEME.light) : fill(SCHEME.dark)
-    noStroke()
-    textSize(SQ_W / 2);
-
-    for (let i = 1; i < 9; i++) {
-        text(String.fromCharCode(96 + i), (i - 0.5) * SQ_W, 8.5 * SQ_W);
+    //coordinates
+    if (SHOW_COORDINATES) {
+        DARK_MODE ? fill(SCHEME.light) : fill(SCHEME.dark)
+        noStroke()
+        textSize(SQ_W / 2);
+        textAlign(CENTER, CENTER)
+    
+        for (let i = 1; i < 9; i++) {
+            text(String.fromCharCode(96 + i), (i - 0.5) * SQ_W, 8.5 * SQ_W);
+        }
+    
+        for (let i = 1; i < 9; i++) {
+            text((9-i).toString(), -0.5 * SQ_W, (i - 0.5) * SQ_W);
+        }
     }
-
-    for (let i = 1; i < 9; i++) {
-        text((9-i).toString(), -0.5 * SQ_W, (i - 0.5) * SQ_W);
-    }
+    
 
     // noStroke()
     // for (squ of board) {

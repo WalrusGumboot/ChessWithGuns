@@ -20,13 +20,14 @@ const COLOUR_SCHEMES = {
 }
 
 let SCHEME = COLOUR_SCHEMES.chess_com
-let DARK_MODE = true
+let DARK_MODE = false
 
 const MOVING_MOVE_INDICATORS = false;
+let SHOW_COORDINATES = false;
 
 const SQ_W = 60
 
 const COL_SCH_W  = 30; //the size of the items
 const COL_SCH_M  = 15; //the margin between the items
 const COL_SCH_DX = 20; //distance from the left edge of the screen
-const COL_SCH_DY = 20; //distance from the top edge of the screen
+const COL_SCH_DY = 32; //distance from the top edge of the screen
