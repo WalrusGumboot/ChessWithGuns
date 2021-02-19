@@ -1,7 +1,21 @@
 # Chess With Guns
-Inspired by [a Twitter thread by Elizabeth Sampat](https://twitter.com/twoscooters/status/1359663550130761729), I decided to make an online chess game implementing the Chess With Guns variant: every square that a piece can legally move to is a square that can be captured on to without having to move the piece. Out of all the ones in the thread, this seemed like the most interesting variant.
+Inspired by [a Twitter thread by Elizabeth Sampat](https://twitter.com/twoscooters/status/1359663550130761729), I decided to make an online chess game implementing the Chess With Guns variant: every square that a piece can legally move to is a square that can be captured on to **without having to move the piece**. Out of all the ones in the thread, this seemed like the most interesting variant.  
 
-### Notation
+I should point out that I'm not particularly good at chess. If anything I write doesn't make sense, blame it on that.
+
+## Contributing
+First off, just don't even bother trying to comprehend the code that I wrote. Even I fail at that most of the time, *and I wrote it*. If you want to, just go ahead and fork it and open a pull request. I'm very inactive on GitHub, though, so I might not respond to it very quickly.
+
+## UI
+You can use these toggles to change how everything looks a bit.   
+![](/readme_assets/ui.png)   
+You can define your own themes according to the template found in [the constants.js file](/constants.js). They'll automatically get added to the list.  
+I'm so sorry. I'm not a UI/UX designer.  
+
+
+*I've tried my best, ok?*
+
+## Notation
 I propose that for a move which captures but doesn't take, pipe symbols are added around the move (e.g. `1. e4 Nf6 2. d3 |Nxe4|`, after which black's knight would still be on f6). As far as I know, this doesn't conflict with any existing modifications to PGN notation (such as `Q@d7` in Crazyhouse or `(B-N)N*c7` in Hostage Chess).
 
 ## Examples

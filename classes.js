@@ -49,8 +49,30 @@ class Piece {
                 //Maybe in the future I'll have less will to live, and I'll attempt it
                 break;
             case KNIGHT:
-                moves.push(new Move())
+                moves.push(new Move(-2, -1, this.pos))
+                moves.push(new Move(-1, -2, this.pos))
+                moves.push(new Move( 1, -2, this.pos))
+                moves.push(new Move( 2, -1, this.pos))
+                moves.push(new Move( 2,  1, this.pos))
+                moves.push(new Move( 1,  2, this.pos))
+                moves.push(new Move(-1,  2, this.pos))
+                moves.push(new Move(-2,  1, this.pos))
+
+                captures = moves //the captures and moves for a knight are always equal
+                break;
+            default:
+                //if something's gotten to this point, i done fucked it up right 'n proper
+                alert("You done fucked it up right \'n proper, mate");
+                break;
         }
+
+        moves    = moves.filter(x => x.testIfOnBoard())
+        captures = captures.filter(x => x.testIfOnBoard())
+
+        //at this point, there are still a bunch of invalid moves:
+        // * pieces can block the paths of e.g. rooks
+        // * absolute pins aren't accounted for
+        // * 
     }
 }
 
@@ -95,7 +117,7 @@ class Square {
 
         rect(this.x, this.y, SQ_W, SQ_W);
 
-        //reset the fancy drawing ctx parameters we mucked up earlier
+        //reset the fancy drawing ctx parameters i fucked up earlier
         drawingContext.setLineDash([])
         drawingContext.lineCap = "round"
     }
