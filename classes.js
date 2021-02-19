@@ -46,6 +46,7 @@ class Piece {
         switch (this.type) {
             case PAWN:
                 console.log("Yup, that's a pawn all right")
+                console.log(this.pos.rank)
                 moves.push(new Move(0, 1, this.pos));
                 if (!this.hasMovedYet) {moves.push(new Move(0, 2))}
                 if (board[this.pos.idx + 7].populated && board[this.pos.idx + 7].piece.colour != this.colour) {
