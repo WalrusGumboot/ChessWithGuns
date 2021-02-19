@@ -20,7 +20,7 @@ class Piece {
         let base_moves = [] 
         //these are the moves a piece can make if there are no other pieces on the board
         //all moves are in index offset: a pawn moving up one square is an offset of 8
-        //these do not account for taking
+        //these do not account for taking or pieces being in the way
 
         switch (this.type) {
             case PAWN:
@@ -29,6 +29,16 @@ class Piece {
                     base_moves.push(16)
                 }
                 break;
+            case KING:
+                //TODO: implement castling
+                for (i of [-9, -8, -7, -1, 1, 7, 8, 9]) {
+                    base_moves.push(i)
+                }
+                break;
+            case KNIGHT:
+                for (i of [-17, -15, -10, -6, 6, 10, 15, 17]) {
+                    base_moves.push(i)
+                }
             default:
                 //we never get to this point
                 break;

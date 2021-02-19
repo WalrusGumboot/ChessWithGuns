@@ -1,31 +1,38 @@
-let sprites = new Array(128); //this is like the least efficient way of doing it but just stfu please
+let sprites = new Array(24); //this is like the least efficient way of doing it but just stfu please
 let board = new Array(64);
 
 let font = null;
 
 let selectedSquare = null;
 
+let couldCastle = {
+    WHITE: {kingSide: true, queenSide: true},
+    BLACK: {kingSide: true, queenSide: true}
+}
+
+let sideToMove = WHITE;
+
 
 function preload() {
     i = WHITE
     col_name = "white"
 
-    sprites[i + 1 ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/king.png")
-    sprites[i + 2 ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/queen.png")
-    sprites[i + 4 ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/knight.png")
-    sprites[i + 8 ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/rook.png")
-    sprites[i + 16] = loadImage(GITHUB_URL + "pieces/" + col_name + "/bishop.png")
-    sprites[i + 32] = loadImage(GITHUB_URL + "pieces/" + col_name + "/pawn.png")
+    sprites[i + KING   ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/king.png")
+    sprites[i + QUEEN  ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/queen.png")
+    sprites[i + KNIGHT ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/knight.png")
+    sprites[i + ROOK   ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/rook.png")
+    sprites[i + BISHOP ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/bishop.png")
+    sprites[i + PAWN   ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/pawn.png")
 
     i = BLACK
     col_name = "black"
 
-    sprites[i + 1 ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/king.png")
-    sprites[i + 2 ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/queen.png")
-    sprites[i + 4 ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/knight.png")
-    sprites[i + 8 ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/rook.png")
-    sprites[i + 16] = loadImage(GITHUB_URL + "pieces/" + col_name + "/bishop.png")
-    sprites[i + 32] = loadImage(GITHUB_URL + "pieces/" + col_name + "/pawn.png")
+    sprites[i + KING   ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/king.png")
+    sprites[i + QUEEN  ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/queen.png")
+    sprites[i + KNIGHT ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/knight.png")
+    sprites[i + ROOK   ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/rook.png")
+    sprites[i + BISHOP ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/bishop.png")
+    sprites[i + PAWN   ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/pawn.png")
 
     font = loadFont("https://openprocessing-usercontent.s3.amazonaws.com/files/user121056/visual839783/hde1931a99b4a00a9d4382c23c040fb26/RobotoMono-Medium.ttf");
 }
@@ -51,6 +58,7 @@ function setup() {
         if ((i >= 8 && i < 16) || (i >= 48 && i < 56)) {type = PAWN}
 
         board[i] = new Square(i, colour, type);
+
     }
 }
 
@@ -61,7 +69,7 @@ function mousePressed() {
         } else if (squ.mouseHover && selectedSquare == squ ) {
             selectedSquare = null
         } else if (squ.mouseHover && selectedSquare != squ ) {
-            if (!squ.populated && selectedSquare.populated) {
+            if (!squ.populated && selectedSquare.populated && selectedSquare.piece.colour == sideToMove) {
                 //TODO: ADD CHECK FOR VALID MOVES
                 //get available moves' offsets
                 let available_moves = selectedSquare.piece.get_available_moves(board);
@@ -77,7 +85,11 @@ function mousePressed() {
                     selectedSquare.populated = false;
     
                     selectedSquare = null;
+
+                    if (sideToMove == WHITE) {sideToMove = BLACK} else {sideToMove = WHITE};
                 }
+            } else {
+                selectedSquare = squ;
             }
         }
     }
@@ -136,5 +148,19 @@ function draw() {
 
     for (let i = 1; i < 9; i++) {
         text((9-i).toString(), -0.5 * SQ_W, (i - 0.5) * SQ_W);
+    }
+
+    noStroke()
+    for (squ of board) {
+        if (squ.colour == WHITE) {
+            fill(SCHEME.dark)
+        } else {
+            fill(SCHEME.light)
+
+        }
+        textSize(20)
+        
+        let offset = 0
+        text((squ.idx - offset).toString(), squ.x + SQ_W/2, squ.y + SQ_W / 2)
     }
 }

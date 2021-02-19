@@ -1,12 +1,12 @@
 const KING   = 1
 const QUEEN  = 2
-const KNIGHT = 4
-const ROOK   = 8
-const BISHOP = 16
-const PAWN   = 32
+const KNIGHT = 3
+const ROOK   = 4
+const BISHOP = 5
+const PAWN   = 6
 
 const WHITE = 0
-const BLACK = 64
+const BLACK = 16
 
 const COLOR_SCHEMES = {
     steve_lacy: {light: "#fedfcf", dark: "#c24d15", hover_l: "#d1c6c0", hover_d: "#8f4e2f"},
