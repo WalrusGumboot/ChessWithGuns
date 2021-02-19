@@ -214,18 +214,18 @@ function draw() {
         if (selectedSquare.populated) {
             selectedSquare.piece.show() //piece on top
 
-            // //draw indicators for legal moves
-            // fill(0, 100);
-            // ellipseMode(CENTER);
-            // noStroke()
+            //draw indicators for legal moves
+            fill(0, 100);
+            ellipseMode(CENTER);
+            noStroke();
 
-            // let idx = selectedSquare.idx;
-            // available_moves = selectedSquare.piece.get_available_moves(board);
-            // for (moveOffset of available_moves) {
-            //     let moveSquare = board[idx + moveOffset]
-            //     let size = MOVING_MOVE_INDICATORS ? SQ_W/3 + Math.sin(frameCount / 15) * SQ_W/12 : SQ_W/3;
-            //     circle(moveSquare.x + SQ_W / 2, moveSquare.y + SQ_W / 2, size)
-            // }
+            available_moves = selectedSquare.piece.get_available_moves(board);
+            console.log(available_moves)
+            for (move of available_moves.moves) {
+                squ = move.getOnBoard(board)
+                let size = MOVING_MOVE_INDICATORS ? SQ_W/3 + Math.sin(frameCount / 15) * SQ_W/12 : SQ_W/3;
+                circle(squ.x + SQ_W / 2, squ.y + SQ_W / 2, size)
+            }
         }
     }
 

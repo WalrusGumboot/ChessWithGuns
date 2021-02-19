@@ -25,7 +25,7 @@ let DARK_MODE = true
 const MOVING_MOVE_INDICATORS = false;
 let SHOW_COORDINATES = false;
 
-const SQ_W = 60
+const SQ_W = 65
 
 const COL_SCH_W  = 30; //the size of the items
 const COL_SCH_M  = 15; //the margin between the items

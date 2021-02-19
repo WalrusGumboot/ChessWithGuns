@@ -6,10 +6,18 @@ class Move {
     }
 
     testIfOnBoard() {
-        let rank = this.currentSquare.rank + xOff;
-        let file = this.currentSquare.file + yOff;
+        let file = this.currentSquare.file + this.xOff;
+        let rank = this.currentSquare.rank + this.yOff;
 
         return rank < 0 || rank > 7 || file < 0 || file > 7
+    }
+
+    getOnBoard(board) {
+        let new_file = this.currentSquare.file + this.xOff;
+        let new_rank = this.currentSquare.rank + this.yOff;
+        let new_idx  = 8 * new_rank + new_file;
+
+        return board[new_idx]
     }
 }
 
@@ -37,8 +45,9 @@ class Piece {
 
         switch (this.type) {
             case PAWN:
+                console.log("Yup, that's a pawn all right")
                 moves.push(new Move(0, 1, this.pos));
-                if (this.hasMovedYet) {moves.push(new Move(0, 2))}
+                if (!this.hasMovedYet) {moves.push(new Move(0, 2))}
                 if (board[this.pos.idx + 7].populated && board[this.pos.idx + 7].piece.colour != this.colour) {
                     captures.push(new Move(-1, 1, this.pos)) //takes to the left
                 }
@@ -70,9 +79,15 @@ class Piece {
         captures = captures.filter(x => x.testIfOnBoard())
 
         //at this point, there are still a bunch of invalid moves:
-        // * pieces can block the paths of e.g. rooks
+        // * pieces can move onto pieces of the same colour
+        // * pieces can block the paths of e.g. rooks but this system just don't give a fuck
         // * absolute pins aren't accounted for
-        // * 
+        // * moves that don't prevent a check when the king is in check are still allowed
+        // * and many, many more.
+        
+        console.log(moves, captures)
+        //for now though, we don't care
+        return {moves: moves, captures: captures}
     }
 }
 
