@@ -3,21 +3,22 @@ class Move {
         this.xOff = xOff;
         this.yOff = yOff;
         this.currentSquare = currentSquare;
+        
+        this.targetFile = this.currentSquare.file + this.xOff;
+        this.targetRank = this.currentSquare.rank + this.yOff;
+
+        this.targetSquare = new Square(this.targetRank * 8 + this.targetFile) //this assumes a valid move
     }
 
     testIfOnBoard() {
-        let file = this.currentSquare.file + this.xOff;
-        let rank = this.currentSquare.rank + this.yOff;
+        let file = this.targetFile;
+        let rank = this.targetRank;
 
-        return rank > 0 || rank < 7 || file > 0 || file < 7
+        return rank >= 0 && rank <= 7 && file >= 0 && file <= 7
     }
 
     getOnBoard(board) {
-        let new_file = this.currentSquare.file + this.xOff;
-        let new_rank = this.currentSquare.rank + this.yOff;
-        let new_idx  = 8 * new_rank + new_file;
-
-        return board[new_idx]
+        return board[this.targetSquare.idx]
     }
 }
 
@@ -37,22 +38,32 @@ class Piece {
         image(this.sprite, this.pos.x, this.pos.y, SQ_W, SQ_W)
     }
 
-    set_pos(new_pos) {this.pos = new_pos;}
-
     get_available_moves(board) {
         let moves    = []
         let captures = []
 
         switch (this.type) {
             case PAWN:
-                moves.push(new Move(0, 1, this.pos));
-                if (!this.hasMovedYet) {moves.push(new Move(0, 2, this.pos))}
-                if (board[this.pos.idx + 7].populated && board[this.pos.idx + 7].piece.colour != this.colour) {
-                    captures.push(new Move(-1, 1, this.pos)) //takes to the left
+                if (this.colour == WHITE) {
+                    moves.push(new Move(0, 1, this.pos));
+                    if (!this.hasMovedYet) {moves.push(new Move(0, 2, this.pos))}
+                    if (board[this.pos.idx + 7].populated && board[this.pos.idx + 7].piece.colour != this.colour) {
+                        captures.push(new Move(-1, 1, this.pos)) //takes to the left
+                    }
+                    if (board[this.pos.idx + 9].populated && board[this.pos.idx + 9].piece.colour != this.colour) {
+                        captures.push(new Move(1, 1, this.pos)) //takes to the right
+                    }
+                } else {
+                    moves.push(new Move(0, -1, this.pos));
+                    if (!this.hasMovedYet) {moves.push(new Move(0, -2, this.pos))}
+                    if (board[this.pos.idx - 9].populated && board[this.pos.idx - 9].piece.colour != this.colour) {
+                        captures.push(new Move(-1, -1, this.pos)) //takes to the left
+                    }
+                    if (board[this.pos.idx - 7].populated && board[this.pos.idx - 7].piece.colour != this.colour) {
+                        captures.push(new Move(1, -1, this.pos)) //takes to the right
+                    }
                 }
-                if (board[this.pos.idx + 9].populated && board[this.pos.idx + 9].piece.colour != this.colour) {
-                    captures.push(new Move(1, 1, this.pos)) //takes to the right
-                }
+                
                 //For now, I really don't feel like dealing with fucking en passant
                 //Maybe in the future I'll have less will to live, and I'll attempt it
                 break;
@@ -76,6 +87,10 @@ class Piece {
 
         moves    = moves.filter(x => x.testIfOnBoard())
         captures = captures.filter(x => x.testIfOnBoard())
+
+        moves    = moves.filter(x => !(board[x.targetSquare.idx].populated));
+        captures = captures.filter(x => board[x.targetSquare.idx].populated && board[x.targetSquare.idx].piece.colour != this.colour)
+        
 
         //at this point, there are still a bunch of invalid moves:
         // * pieces can move onto pieces of the same colour

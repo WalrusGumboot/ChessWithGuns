@@ -67,6 +67,8 @@ function setup() {
         board[i] = new Square(i, colour, type);
 
     }
+
+    board[20] = new Square(20, BLACK, PAWN)
 }
 
 function mousePressed() {
@@ -76,52 +78,16 @@ function mousePressed() {
     }
 
     for (squ of board) { //not using square as a name here since it's an internal p5 function
-        /*
-        if (squ.mouseHover && selectedSquare == null && squ.populated && squ.piece.colour == sideToMove) {
-            selectedSquare = squ
-        } else if (squ.mouseHover && selectedSquare == squ ) {
-            selectedSquare = null
-        } else if (squ.mouseHover && selectedSquare != squ ) {
-            if (!squ.populated && selectedSquare.populated && selectedSquare.piece.colour == sideToMove) {
-                //TODO: ADD CHECK FOR VALID MOVES
-                //get available moves' offsets
-                let available_moves = selectedSquare.piece.get_available_moves(board);
-                let offsets = available_moves.map(x => x + selectedSquare.idx - squ.idx) //if any of these are zero, it's valid
-                
-                if (offsets.includes(0)) {
-                    squ.piece = selectedSquare.piece;
-                    squ.populated = true;
-                    squ.piece.set_pos(squ)
-                    squ.piece.hasMovedYet = true;
-                    
-                    selectedSquare.piece = null;
-                    selectedSquare.populated = false;
-    
-                    selectedSquare = null;
-
-                    if (sideToMove == WHITE) {sideToMove = BLACK} else {sideToMove = WHITE};
-                }
-            }
-        }
-        */ //OLD, BAD CODE
-
-        if (squ.mouseHover && squ.populated) {
-            if (selectedSquare == null && squ.piece.colour == sideToMove) {
-                //nothing appropriate is selected, so we select this square
-                selectedSquare = squ;
-            } else if (selectedSquare == squ) {
-                //the user pressed the same square again, so we deselect it
-                selectedSquare = null;
-            } else if (selectedSquare != null && squ.piece.colour == sideToMove) {
-                //smth was already selected, but it was our colour so just select this one instead
-                selectedSquare = squ;
-            } else if (selectedSquare != null && selectedSquare != squ) {
-                let moveSet = squ.piece.get_available_moves(board);
-
+        if (squ.mouseHover) {
+            if (selectedSquare != null && selectedSquare != squ && !(squ.populated && squ.piece.colour == sideToMove)) { //we want to move
+                let moved = false;
+                let moveSet = selectedSquare.piece.get_available_moves(board);
+                console.log(moveSet)
                 //Check if the move would be a capture
                 for (capture of moveSet.captures) {
                     let targetSquare = capture.getOnBoard(board)
                     if (targetSquare.idx == squ.idx) {
+                        console.log("CAPTURE on idx " + targetSquare.idx)
                         if (targetSquare.piece.colour == BLACK) {
                             capturedMaterial.BLACK.push(targetSquare.piece);
                         } else {
@@ -129,16 +95,59 @@ function mousePressed() {
                         }
 
                         targetSquare.piece = selectedSquare.piece;
+                        targetSquare.piece.pos = targetSquare;
+                        //we don't necessarily have to specify that the square is now populated
+                        //it's a capture, so definitionally it was already populated
+                        //however, in order to make this code make any semblance of sense in my head i'll add it
+                        targetSquare.populated = true
                         selectedSquare.piece = null;
                         selectedSquare.populated = false;
+                        selectedSquare = null;
+
+                        moved = true;
                     }
                 }
 
-                //Oh yeah and check regular moves too
-                //I aint got time for that now tho
-                //It's fucking 1am
-                //TODO: this shit
-            }
+                for (move of moveSet.moves) {
+                    let targetSquare = move.getOnBoard(board)
+                    if (targetSquare.idx == squ.idx) {
+                        console.log("MOVE to idx " + targetSquare.idx)
+                    
+                        targetSquare.piece = selectedSquare.piece;
+                        targetSquare.piece.pos = targetSquare;
+                        targetSquare.populated = true;
+
+                        selectedSquare.piece = null;
+                        selectedSquare.populated = false;
+                        selectedSquare = null;
+                        
+                        console.log(targetSquare)
+                        moved = true;
+                    }
+                }
+
+                if (moved) {
+                    squ.piece.hasMovedYet = true;
+                    sideToMove == WHITE ? sideToMove = BLACK : sideToMove = WHITE;
+                }
+                
+                // squ.piece = selectedSquare.piece
+                // squ.piece.pos = squ
+                // squ.populated = true
+                // selectedSquare.populated = false
+                // selectedSquare.piece = null;
+                // selectedSquare = null
+
+            } else if (selectedSquare == null && squ.populated && squ.piece.colour == sideToMove) {
+                //nothing appropriate is selected, so we select this square
+                selectedSquare = squ;
+            } else if (selectedSquare == squ) {
+                //the user pressed the same square again, so we deselect it
+                selectedSquare = null;
+            } else if (selectedSquare != null  && squ.populated && squ.piece.colour == sideToMove) {
+                //smth was already selected, but it was our colour so just select this one instead
+                selectedSquare = squ;
+            } 
         }
     }
 }
