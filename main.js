@@ -67,8 +67,6 @@ function setup() {
         board[i] = new Square(i, colour, type);
 
     }
-
-    board[20] = new Square(20, BLACK, PAWN)
 }
 
 function mousePressed() {
@@ -120,7 +118,7 @@ function mousePressed() {
                         selectedSquare.piece = null;
                         selectedSquare.populated = false;
                         selectedSquare = null;
-                        
+
                         console.log(targetSquare)
                         moved = true;
                     }

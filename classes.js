@@ -79,6 +79,18 @@ class Piece {
 
                 captures = moves //the captures and moves for a knight are always equal
                 break;
+            case KING:
+                moves.push(new Move(-1, -1, this.pos))
+                moves.push(new Move(-1,  0, this.pos))
+                moves.push(new Move(-1,  1, this.pos))
+                moves.push(new Move( 0, -1, this.pos))
+                moves.push(new Move( 0,  1, this.pos)) 
+                moves.push(new Move( 1, -1, this.pos))
+                moves.push(new Move( 1,  0, this.pos))
+                moves.push(new Move( 1,  1, this.pos))
+
+                captures = moves;
+                break;
             default:
                 //if something's gotten to this point, i done fucked it up right 'n proper
                 alert("You done fucked it up right \'n proper, mate");
