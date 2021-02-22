@@ -48,11 +48,11 @@ function getAllInDirection(move, board) {
     for (let i = 0; i < 8; i++) {
         //I'm not smart enough to make this recursive so I'mma do it the hard way
         let testSquare = testMove.getOnBoard(board)
-        if (testSquare.testIfOnBoard()) {
+        if (testMove.testIfOnBoard()) {
             if (!testSquare.populated) {
-                moves.append(testMove);
+                moves.push(testMove);
             } else if (testSquare.piece.colour != move.getOnBoard(board).piece.colour) {
-                captures.append(testMove);
+                captures.push(testMove);
                 break;
             }
             testMove = new Move(move.xOff, move.yOff, testSquare);
@@ -88,6 +88,8 @@ class Piece {
     get_available_moves(board) {
         let moves    = []
         let captures = []
+        
+        let directions = []
 
         switch (this.type) {
             case PAWN:
@@ -141,35 +143,48 @@ class Piece {
             case ROOK:
                 //I don't add the captures yet for rook, bishop and queen;
                 //they get added in a tricky trick later on
-                for (let i = -7; i < 8; i++) {
-                    if (i == 0) {continue}
-                    moves.push(new Move(i, 0, this.pos));
-                    moves.push(new Move(0, i, this.pos));
+                directions = [
+                    new Move(-1,  0, this.pos), 
+                    new Move( 1,  0, this.pos), 
+                    new Move( 0, -1, this.pos), 
+                    new Move( 0,  1, this.pos)
+                ]
+                for (let m of directions) {
+                    let result = getAllInDirection(m, board);
+                    moves = moves.concat(result.moves);
+                    captures = captures.concat(result.captures);
                 }
                 break;
             case BISHOP:
-                for (let i = 1; i < 8; i++) {
-                    moves.push(new Move( i,  i, this.pos));
-                    moves.push(new Move( i, -i, this.pos));
-                    moves.push(new Move(-i,  i, this.pos));
-                    moves.push(new Move(-i, -i, this.pos));
+                directions = [
+                    new Move(-1, -1, this.pos), 
+                    new Move(-1,  1, this.pos), 
+                    new Move( 1, -1, this.pos), 
+                    new Move( 1,  1, this.pos)
+                ]
+                for (let m of directions) {
+                    let result = getAllInDirection(m, board);
+                    moves = moves.concat(result.moves);
+                    captures = captures.concat(result.captures);
                 }
                 break;
             case QUEEN:
                 //just literally the bishop and rook together
-                for (let i = 1; i < 8; i++) {
-                    moves.push(new Move( i,  i, this.pos));
-                    moves.push(new Move( i, -i, this.pos));
-                    moves.push(new Move(-i,  i, this.pos));
-                    moves.push(new Move(-i, -i, this.pos));
+                directions = [
+                    new Move(-1,  0, this.pos), 
+                    new Move( 1,  0, this.pos), 
+                    new Move( 0, -1, this.pos), 
+                    new Move( 0,  1, this.pos),
+                    new Move(-1, -1, this.pos), 
+                    new Move(-1,  1, this.pos), 
+                    new Move( 1, -1, this.pos), 
+                    new Move( 1,  1, this.pos)
+                ]
+                for (let m of directions) {
+                    let result = getAllInDirection(m, board);
+                    moves = moves.concat(result.moves);
+                    captures = captures.concat(result.captures);
                 }
-
-                for (let i = -7; i < 8; i++) {
-                    if (i == 0) {continue}
-                    moves.push(new Move(i, 0, this.pos));
-                    moves.push(new Move(0, i, this.pos));
-                }
-
                 break;
             default:
                 //if something's gotten to this point, i done fucked it up right 'n proper
@@ -177,9 +192,7 @@ class Piece {
                 break;
         }
 
-        //anything that's not on the board isn't going to be valid, now, is it?
-        moves    = moves.filter(x => x.testIfOnBoard())
-        captures = captures.filter(x => x.testIfOnBoard())
+        console.log(moves)
 
         //moves can only happen to unpopulated squares
         moves    = moves.filter(x => !(board[x.targetSquare.idx].populated))
