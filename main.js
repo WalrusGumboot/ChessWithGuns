@@ -5,7 +5,6 @@ let selectedSquare = null;
 
 let font = null;
 let shootingIndicator;
-let shotEffect;
 
 let couldCastle = {
     WHITE: {kingSide: true, queenSide: true},
@@ -45,7 +44,6 @@ function preload() {
     font = loadFont("https://openprocessing-usercontent.s3.amazonaws.com/files/user121056/visual839783/hde1931a99b4a00a9d4382c23c040fb26/RobotoMono-Medium.ttf");
 
     shootingIndicator = loadImage(GITHUB_URL + "shooting_indicator.png");
-    shotEffect = loadSound(GITHUB_URL + "gunshot_sfx.mp3");
 }
 
 let canvas;
@@ -107,7 +105,6 @@ function mousePressed() {
                             squ.piece = null;
                             squ.populated = false;
                             selectedSquare = null;
-                            shotEffect.play();
                         } else {
                             targetSquare.piece = selectedSquare.piece;
                             targetSquare.piece.pos = targetSquare;
