@@ -43,7 +43,7 @@ function preload() {
 
     font = loadFont("https://openprocessing-usercontent.s3.amazonaws.com/files/user121056/visual839783/hde1931a99b4a00a9d4382c23c040fb26/RobotoMono-Medium.ttf");
 
-    shootingIndicator = loadImage(GITHUB_URL + shooting_indicator.png);
+    shootingIndicator = loadImage(GITHUB_URL + "shooting_indicator.png");
 }
 
 let canvas;
