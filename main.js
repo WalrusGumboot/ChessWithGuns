@@ -1,11 +1,11 @@
 let sprites = new Array(14); //this is like the least efficient way of doing it but just stfu please
 let board = new Array(64);
 
-let font = null;
-
 let selectedSquare = null;
 
+let font = null;
 let shootingIndicator;
+let shotEffect;
 
 let couldCastle = {
     WHITE: {kingSide: true, queenSide: true},
@@ -21,6 +21,7 @@ let sideToMove = WHITE;
 
 
 function preload() {
+    //loading the sprites
     i = WHITE
     col_name = "white"
 
@@ -44,6 +45,7 @@ function preload() {
     font = loadFont("https://openprocessing-usercontent.s3.amazonaws.com/files/user121056/visual839783/hde1931a99b4a00a9d4382c23c040fb26/RobotoMono-Medium.ttf");
 
     shootingIndicator = loadImage(GITHUB_URL + "shooting_indicator.png");
+    shotEffect = loadSound(GITHUB_URL + "gunshot_sfx.mp3");
 }
 
 let canvas;
@@ -105,6 +107,7 @@ function mousePressed() {
                             squ.piece = null;
                             squ.populated = false;
                             selectedSquare = null;
+                            shotEffect.play();
                         } else {
                             targetSquare.piece = selectedSquare.piece;
                             targetSquare.piece.pos = targetSquare;
