@@ -5,6 +5,8 @@ let font = null;
 
 let selectedSquare = null;
 
+let shootingIndicator;
+
 let couldCastle = {
     WHITE: {kingSide: true, queenSide: true},
     BLACK: {kingSide: true, queenSide: true}
@@ -40,6 +42,8 @@ function preload() {
     sprites[i + PAWN   ] = loadImage(GITHUB_URL + "pieces/" + col_name + "/pawn.png")
 
     font = loadFont("https://openprocessing-usercontent.s3.amazonaws.com/files/user121056/visual839783/hde1931a99b4a00a9d4382c23c040fb26/RobotoMono-Medium.ttf");
+
+    shootingIndicator = loadImage(GITHUB_URL + shooting_indicator.png);
 }
 
 let canvas;
@@ -79,12 +83,17 @@ function mousePressed() {
         if (squ.mouseHover) {
             if (selectedSquare != null && selectedSquare != squ && !(squ.populated && squ.piece.colour == sideToMove)) { //we want to move
                 let moved = false;
+                let tookAction = false;
                 let moveSet = selectedSquare.piece.get_available_moves(board);
                 console.log(moveSet)
                 //Check if the move would be a capture
                 for (capture of moveSet.captures) {
                     let targetSquare = capture.getOnBoard(board)
                     if (targetSquare.idx == squ.idx) {
+                        //NOW HERE IS WHERE THE REAL SHIT HAPPENS
+                        //IF THE USER CHOOSES TO SHOOT THE PIECE INSTEAD, (get this:)
+                        //WE DON'T MOVE
+
                         console.log("CAPTURE on idx " + targetSquare.idx)
                         if (targetSquare.piece.colour == BLACK) {
                             capturedMaterial.BLACK.push(targetSquare.piece);
@@ -92,17 +101,25 @@ function mousePressed() {
                             capturedMaterial.WHITE.push(targetSquare.piece);
                         }
 
-                        targetSquare.piece = selectedSquare.piece;
-                        targetSquare.piece.pos = targetSquare;
-                        //we don't necessarily have to specify that the square is now populated
-                        //it's a capture, so definitionally it was already populated
-                        //however, in order to make this code make any semblance of sense in my head i'll add it
-                        targetSquare.populated = true
-                        selectedSquare.piece = null;
-                        selectedSquare.populated = false;
-                        selectedSquare = null;
+                        if (keyIsDown(32)) { //space bar
+                            squ.piece = null;
+                            squ.populated = false;
+                            selectedSquare = null;
+                        } else {
+                            targetSquare.piece = selectedSquare.piece;
+                            targetSquare.piece.pos = targetSquare;
+                            //we don't necessarily have to specify that the square is now populated
+                            //it's a capture, so definitionally it was already populated
+                            //however, in order to make this code make any semblance of sense in my head i'll add it
+                            targetSquare.populated = true;
+                            selectedSquare.piece = null;
+                            selectedSquare.populated = false;
+                            selectedSquare = null;
 
-                        moved = true;
+                            moved = true;
+                        }
+                        
+                        tookAction = true;
                     }
                 }
 
@@ -121,13 +138,13 @@ function mousePressed() {
 
                         console.log(targetSquare)
                         moved = true;
+                        tookAction = true;
                     }
                 }
 
-                if (moved) {
-                    squ.piece.hasMovedYet = true;
-                    sideToMove == WHITE ? sideToMove = BLACK : sideToMove = WHITE;
-                }
+                if (moved) {squ.piece.hasMovedYet = true}
+                if (tookAction) {sideToMove == WHITE ? sideToMove = BLACK : sideToMove = WHITE}
+                
                 
                 // squ.piece = selectedSquare.piece
                 // squ.piece.pos = squ
@@ -259,6 +276,10 @@ function draw() {
                 squ = move.getOnBoard(board)
                 let size = MOVING_MOVE_INDICATORS ? SQ_W/3 + Math.sin(frameCount / 15) * SQ_W/12 : SQ_W/3;
                 circle(squ.x + SQ_W / 2, squ.y + SQ_W / 2, size)
+            }
+
+            if (available_moves.captures != [] && keyIsDown(32)) { //space bar
+                image(shootingIndicator, selectedSquare.x, selectedSquare.y, SQ_W, SQ_W);
             }
         }
     }
