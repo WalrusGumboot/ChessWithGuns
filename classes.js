@@ -21,7 +21,7 @@ class Move {
         return board[this.targetSquare.idx]
     }
 
-    changeStartingSquare(startingSquare) {
+    changeStartingSquare(startingSquare) { //Smth is deffo wrong with this fn but i cant fix it rn
         //First, we get the difference between the given square and this.currentSquare
         let dx = this.currentSquare.file - startingSquare.file;
         let dy = this.currentSquare.rank - startingSquare.rank;
@@ -34,6 +34,8 @@ class Move {
         this.currentSquare = startingSquare;
         this.xOff = dx;
         this.yOff = dy;
+
+        return this
     }
 }
 
@@ -61,9 +63,11 @@ function getAllInDirection(move, board) {
         }
     }
 
+    
     //of note is that all moves are still the same offset, they just have different starting squares
     //so we run them all through a function that remaps the starting square and adjusts the offsets
     moves    = moves.map(x => x.changeStartingSquare(move.currentSquare))
+    console.log(moves)
     captures = captures.map(x => x.changeStartingSquare(move.currentSquare))
 
     return {moves: moves, captures: captures}
@@ -191,8 +195,6 @@ class Piece {
                 alert("You done fucked it up right \'n proper, mate. \nPlease file an issue at https://github.com/WalrusGumboot/ChessWithGuns/issues/new/choose.");
                 break;
         }
-
-        console.log(moves)
 
         //moves can only happen to unpopulated squares
         moves    = moves.filter(x => !(board[x.targetSquare.idx].populated))
