@@ -20,7 +20,7 @@ I propose that for a move which captures but doesn't take, pipe symbols are adde
 
 ## Examples
 ### Openings
-Consider the slightly unusual `1. e4 Nf6 2. d3` (known as the Alekhine's Defense: Maróczy Variation. At the time of writing, there are 1233 games like this on chess.com). The board looks like the following:  
+Consider the slightly unusual `1. e4 Nf6 2. d3` (known as the Alekhine's Defense: Maróczy Variation. At the time of writing, there are 1233 games like this on chess.com out of 3064971, so about 0.0402%). The board looks like the following:  
 ![](/readme_assets/1.%20e4%20Nf6%202.%20d3.png)  
 Since it's black's turn, taking with the knight on e4 is a possible move. However, black can instead opt to shoot white's pawn, leaving the knight in place. The board now looks like  
 ![](/readme_assets/1.%20e4%20Nf6%202.%20d3%20(Nxe4).png)
