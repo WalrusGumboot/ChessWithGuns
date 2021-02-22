@@ -91,21 +91,56 @@ class Piece {
 
                 captures = moves;
                 break;
+            case ROOK:
+                //I don't add the captures yet for rook, bishop and queen;
+                //they get added in a tricky trick later on
+                for (let i = -7; i < 8; i++) {
+                    if (i == 0) {continue}
+                    moves.push(new Move(i, 0, this.pos));
+                    moves.push(new Move(0, i, this.pos));
+                }
+                break;
+            case BISHOP:
+                for (let i = 1; i < 8; i++) {
+                    moves.push(new Move( i,  i, this.pos));
+                    moves.push(new Move( i, -i, this.pos));
+                    moves.push(new Move(-i,  i, this.pos));
+                    moves.push(new Move(-i, -i, this.pos));
+                }
+                break;
+            case QUEEN:
+                //just literally the bishop and rook together
+                for (let i = 1; i < 8; i++) {
+                    moves.push(new Move( i,  i, this.pos));
+                    moves.push(new Move( i, -i, this.pos));
+                    moves.push(new Move(-i,  i, this.pos));
+                    moves.push(new Move(-i, -i, this.pos));
+                }
+
+                for (let i = -7; i < 8; i++) {
+                    if (i == 0) {continue}
+                    moves.push(new Move(i, 0, this.pos));
+                    moves.push(new Move(0, i, this.pos));
+                }
+
+                break;
             default:
                 //if something's gotten to this point, i done fucked it up right 'n proper
-                alert("You done fucked it up right \'n proper, mate");
+                alert("You done fucked it up right \'n proper, mate. \nPlease file an issue at https://github.com/WalrusGumboot/ChessWithGuns/issues/new/choose.");
                 break;
         }
 
+        //anything that's not on the board isn't going to be valid, now, is it?
         moves    = moves.filter(x => x.testIfOnBoard())
         captures = captures.filter(x => x.testIfOnBoard())
 
-        moves    = moves.filter(x => !(board[x.targetSquare.idx].populated));
+        //moves can only happen to unpopulated squares
+        moves    = moves.filter(x => !(board[x.targetSquare.idx].populated))
+        //captures can only happen on squares populated by the other colour
         captures = captures.filter(x => board[x.targetSquare.idx].populated && board[x.targetSquare.idx].piece.colour != this.colour)
         
 
         //at this point, there are still a bunch of invalid moves:
-        // * pieces can move onto pieces of the same colour
         // * pieces can block the paths of e.g. rooks but this system just don't give a fuck
         // * absolute pins aren't accounted for
         // * moves that don't prevent a check when the king is in check are still allowed
