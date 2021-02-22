@@ -20,6 +20,53 @@ class Move {
     getOnBoard(board) {
         return board[this.targetSquare.idx]
     }
+
+    changeStartingSquare(startingSquare) {
+        //First, we get the difference between the given square and this.currentSquare
+        let dx = this.currentSquare.file - startingSquare.file;
+        let dy = this.currentSquare.rank - startingSquare.rank;
+
+        //Then, we subtract the xOff and yOff
+        dx -= this.xOff;
+        dy -= this.yOff;
+
+        //And there you go, now we have everything we need
+        this.currentSquare = startingSquare;
+        this.xOff = dx;
+        this.yOff = dy;
+    }
+}
+
+function getAllInDirection(move, board) {
+    //This function is a bit special, in that the move isn't a literal board move.
+    //It just signifies a direction (e.g. (-1, 1) is towards the top left)
+    //It then returns an ordered list of all moves on the board in that direction,
+    //starting from the Move's square
+    moves = []
+    captures = []
+    testMove = move
+    for (let i = 0; i < 8; i++) {
+        //I'm not smart enough to make this recursive so I'mma do it the hard way
+        let testSquare = testMove.getOnBoard(board)
+        if (testSquare.testIfOnBoard()) {
+            if (!testSquare.populated) {
+                moves.append(testMove);
+            } else if (testSquare.piece.colour != move.getOnBoard(board).piece.colour) {
+                captures.append(testMove);
+                break;
+            }
+            testMove = new Move(move.xOff, move.yOff, testSquare);
+        } else {
+            break;
+        }
+    }
+
+    //of note is that all moves are still the same offset, they just have different starting squares
+    //so we run them all through a function that remaps the starting square and adjusts the offsets
+    moves    = moves.map(x => x.changeStartingSquare(move.currentSquare))
+    captures = captures.map(x => x.changeStartingSquare(move.currentSquare))
+
+    return {moves: moves, captures: captures}
 }
 
 class Piece {
